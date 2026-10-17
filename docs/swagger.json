@@ -1,0 +1,284 @@
+
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Biblioteca Digital API",
+    "description": "Documentação da API da Biblioteca Digital"
+  },
+  "host": "localhost:3000",
+  "basePath": "/api",
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/livros": {
+      "post": {
+        "summary": "Cadastrar um novo livro",
+        "description": "Adiciona um novo livro à biblioteca digital.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Dados do livro a ser cadastrado",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "titulo"
+              ],
+              "properties": {
+                "titulo": {
+                  "type": "string",
+                  "example": "O Senhor dos Anéis"
+                },
+                "autor": {
+                  "type": "string",
+                  "example": "J.R.R. Tolkien"
+                },
+                "ano": {
+                  "type": "integer",
+                  "example": 1954
+                },
+                "genero": {
+                  "type": "string",
+                  "example": "Fantasia"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Livro cadastrado com sucesso"
+          },
+          "400": {
+            "description": "Título inválido ou não informado"
+          },
+          "500": {
+            "description": "Erro interno do servidor"
+          }
+        }
+      },
+      "get": {
+        "summary": "Listar todos os livros",
+        "description": "Obtém uma lista de livros da biblioteca digital, permitindo filtrar por título, autor e gênero, paginar os resultados e ordenar a listagem.",
+        "parameters": [
+          {
+            "name": "titulo",
+            "in": "query",
+            "description": "Filtrar por título do livro. Permite busca parcial, sem diferenciar letras maiúsculas e minúsculas.",
+            "required": false,
+            "type": "string",
+            "example": "Senhor dos Anéis"
+          },
+          {
+            "name": "autor",
+            "in": "query",
+            "description": "Filtrar pelo nome exato do autor.",
+            "required": false,
+            "type": "string",
+            "example": "J.R.R. Tolkien"
+          },
+          {
+            "name": "genero",
+            "in": "query",
+            "description": "Filtrar por gênero do livro. Permite busca parcial, sem diferenciar letras maiúsculas e minúsculas.",
+            "required": false,
+            "type": "string",
+            "example": "Fantasia"
+          },
+          {
+            "name": "pagina",
+            "in": "query",
+            "description": "Número da página a ser retornada. O valor padrão é 1.",
+            "required": false,
+            "type": "integer",
+            "default": 1,
+            "minimum": 1,
+            "example": 1
+          },
+          {
+            "name": "itensPorPagina",
+            "in": "query",
+            "description": "Quantidade máxima de livros por página. O valor padrão é 5.",
+            "required": false,
+            "type": "integer",
+            "default": 5,
+            "minimum": 1,
+            "example": 5
+          },
+          {
+            "name": "ordenadoPor",
+            "in": "query",
+            "description": "Campo pelo qual os livros serão ordenados, como titulo, autor, ano ou genero. Deve ser informado junto com ordem.",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "titulo",
+              "autor",
+              "ano",
+              "genero"
+            ],
+            "example": "ano"
+          },
+          {
+            "name": "ordem",
+            "in": "query",
+            "description": "Ordem de classificação: asc para crescente ou desc para decrescente. Quando informada, utiliza o campo definido em ordenadoPor.",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "example": "desc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de livros retornada com sucesso",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "_id": {
+                    "type": "string",
+                    "example": "507f1f77bcf86cd799439011"
+                  },
+                  "titulo": {
+                    "type": "string",
+                    "example": "O Senhor dos Anéis"
+                  },
+                  "autor": {
+                    "type": "string",
+                    "example": "J.R.R. Tolkien"
+                  },
+                  "ano": {
+                    "type": "integer",
+                    "example": 1954
+                  },
+                  "genero": {
+                    "type": "string",
+                    "example": "Fantasia"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro ao buscar livros"
+          }
+        }
+      }
+    },
+    "/livros/{id}": {
+      "get": {
+        "summary": "Buscar um livro pelo ID",
+        "description": "Busca um livro específico pelo seu identificador.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Identificador do livro",
+            "required": true,
+            "type": "string",
+            "example": "507f1f77bcf86cd799439011"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Livro encontrado com sucesso"
+          },
+          "404": {
+            "description": "Livro não encontrado"
+          },
+          "500": {
+            "description": "Erro ao buscar livro"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Atualizar informações de um livro",
+        "description": "Atualiza os dados de um livro existente na biblioteca digital.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Identificador do livro que será atualizado",
+            "required": true,
+            "type": "string",
+            "example": "507f1f77bcf86cd799439011"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Dados que serão atualizados no livro",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "titulo": {
+                  "type": "string",
+                  "example": "O Hobbit"
+                },
+                "autor": {
+                  "type": "string",
+                  "example": "J.R.R. Tolkien"
+                },
+                "ano": {
+                  "type": "integer",
+                  "example": 1937
+                },
+                "genero": {
+                  "type": "string",
+                  "example": "Aventura"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Livro atualizado com sucesso"
+          },
+          "400": {
+            "description": "Dados inválidos"
+          },
+          "404": {
+            "description": "Livro não encontrado"
+          },
+          "500": {
+            "description": "Erro ao atualizar o livro"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Excluir um livro",
+        "description": "Remove um livro da biblioteca digital pelo seu identificador.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Identificador do livro que será excluído",
+            "required": true,
+            "type": "string",
+            "example": "507f1f77bcf86cd799439011"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Livro excluído com sucesso"
+          },
+          "404": {
+            "description": "Livro não encontrado"
+          },
+          "500": {
+            "description": "Erro ao excluir o livro"
+          }
+        }
+      }
+    }
+  }
+}
